@@ -79,7 +79,8 @@ class RotationWatcher(object):
 
         p = self.adb.start_shell(
             "app_process -Djava.class.path={0} /data/local/tmp com.example.rotationwatcher.Main".format(
-                self.path_in_android))
+                self.path_in_android),
+            start_new_session=True)
         self.nbsp = NonBlockingStreamReader(p.stdout, name="rotation_server", auto_kill=True)
 
         if p.poll() is not None:
@@ -90,13 +91,21 @@ class RotationWatcher(object):
         return p
 
     def teardown(self):
+        print('tearing down RotationWatcher', flush=True)
         self._t_kill_event.set()
+        print('set', flush=True)
         if self.ow_proc:
-            kill_proc(self.ow_proc)
+            print('ow_proc', flush=True)
+            kill_proc(self.ow_proc, timeout=10)
+            print('ow_proc killed', flush=True)
         if self.nbsp:
+            print('nbsp', flush=True)
             self.nbsp.kill()
+            print('nbsp killed', flush=True)
         self.ow_callback = []
+        print('setattr...', flush=True)
         setattr(self, "_start_ready", None)
+        print('teardown done', flush=True)
 
     def start(self):
         """

@@ -66,7 +66,7 @@ def _cleanup():
         func(*args, **kwargs)
 
 
-def kill_proc(proc):
+def kill_proc(proc, timeout=30):
     """
     Kill the process and close _io.BufferedWriter to avoid `ResourceWarning: unclosed file <_io.BufferedWriter name=6>`
 
@@ -80,7 +80,9 @@ def kill_proc(proc):
     # https://bugs.python.org/issue35182
     # 部分低版本的python中，重复关闭io流可能会导致异常报错，因此需要额外加入判断closed
     if proc.stdout and not proc.stdout.closed:
-        proc.communicate()
+        print('communicating', flush=True)
+        proc.communicate(timeout=timeout)
+    print('done', flush=True)
 
 
 # atexit.register(_cleanup)

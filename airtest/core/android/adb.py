@@ -160,7 +160,7 @@ class ADB(object):
         """
         return self.cmd("version", device=False).strip()
 
-    def start_cmd(self, cmds, device=True):
+    def start_cmd(self, cmds, device=True, start_new_session=False):
         """
         Start a subprocess with adb command(s)
 
@@ -193,7 +193,8 @@ class ADB(object):
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            creationflags=SUBPROCESS_FLAG
+            creationflags=SUBPROCESS_FLAG,
+            start_new_session=start_new_session
         )
         return proc
 
